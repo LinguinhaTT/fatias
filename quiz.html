@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Descubra se você tem o perfil · Júlia Cherem</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal: #77B0AF;
+      --teal-dark: #5E9897;
+      --cream: #FCF8ED;
+      --salmon: #E8857A;
+      --salmon-dark: #C0392B;
+      --text: #2D3748;
+      --muted: #5A6474;
+      --border: #E8E0D0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--cream);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      width: 100%;
+      background: var(--teal);
+      padding: 16px 20px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .top-bar-name {
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .top-bar-sub {
+      color: rgba(255,255,255,0.8);
+      font-size: 11px;
+      font-weight: 500;
+      margin-top: 2px;
+      letter-spacing: 0.05em;
+    }
+
+    /* PROGRESS */
+    .progress-wrap {
+      width: 100%;
+      max-width: 660px;
+      padding: 24px 24px 0;
+    }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .progress-label {
+      font-size: 12px;
+      color: var(--teal);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .progress-pct {
+      font-size: 12px;
+      color: #9AA5B4;
+      font-weight: 600;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 7px;
+      background: #E0D8C8;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), #A8D5D4);
+      border-radius: 99px;
+      transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* CARD */
+    .card {
+      width: 100%;
+      max-width: 660px;
+      background: #fff;
+      border-radius: 24px;
+      padding: 44px 40px;
+      margin: 24px 20px 12px;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.07);
+      animation: fadeUp 0.38s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-tag {
+      display: inline-block;
+      background: #EFF7F6;
+      color: var(--teal);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 99px;
+      padding: 5px 16px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.38;
+      margin-bottom: 10px;
+    }
+    .card .hint {
+      font-size: 13px;
+      color: #9AA5B4;
+      margin-bottom: 28px;
+      font-weight: 500;
+    }
+
+    /* OPTIONS */
+    .options { display: flex; flex-direction: column; gap: 11px; }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 18px;
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      background: #FDFAF5;
+      user-select: none;
+    }
+    .option:hover { border-color: var(--teal); background: #EFF7F6; transform: translateX(3px); }
+    .option.selected { border-color: var(--teal); background: #EFF7F6; }
+    .option.selected .opt-check { background: var(--teal); border-color: var(--teal); }
+    .option.selected .opt-check::after { opacity: 1; }
+
+    .opt-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+    .opt-text { font-size: 14px; font-weight: 500; color: #3D4A58; line-height: 1.45; flex: 1; }
+    .opt-check {
+      width: 20px; height: 20px;
+      border: 2px solid #C8D0DA;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.18s;
+    }
+    .opt-check::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 8px; height: 8px;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.18s;
+    }
+
+    /* NEXT BUTTON */
+    .btn-next {
+      display: block;
+      width: 100%;
+      margin-top: 28px;
+      padding: 16px;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, transform 0.15s, opacity 0.2s;
+    }
+    .btn-next:hover:not(:disabled) { background: var(--teal-dark); transform: translateY(-1px); }
+    .btn-next:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* LOADING / ANÁLISE */
+    #screen-loading {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      width: 100%;
+      max-width: 660px;
+      margin: 24px 20px;
+    }
+    .loading-emoji { font-size: 52px; margin-bottom: 20px; animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
+    .loading-text { font-size: 20px; font-weight: 700; color: var(--text); text-align: center; margin-bottom: 10px; }
+    .loading-sub { font-size: 14px; color: var(--muted); text-align: center; }
+    .loading-bar {
+      width: 240px;
+      height: 6px;
+      background: #E0D8C8;
+      border-radius: 99px;
+      margin-top: 24px;
+      overflow: hidden;
+    }
+    .loading-bar-fill {
+      height: 100%;
+      background: var(--teal);
+      border-radius: 99px;
+      width: 0%;
+      animation: loadBar 2.2s ease forwards;
+    }
+    @keyframes loadBar { to { width: 100%; } }
+
+    /* EMAIL CAPTURE */
+    #screen-email .card h2 { margin-bottom: 6px; }
+    .email-highlight {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFF3CD;
+      color: #856404;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 10px;
+      padding: 8px 14px;
+      margin-bottom: 24px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 16px; }
+    .form-field { display: flex; flex-direction: column; gap: 6px; }
+    .form-field label { font-size: 13px; font-weight: 600; color: var(--text); }
+    .form-field input {
+      padding: 14px 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: #FDFAF5;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-field input:focus { border-color: var(--teal); background: #fff; }
+    .form-field input::placeholder { color: #B0BAC4; }
+    .privacy-note {
+      font-size: 11px;
+      color: #9AA5B4;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    /* RESULT */
+    #screen-result {
+      display: none;
+      width: 100%;
+      max-width: 660px;
+      margin: 24px 20px 40px;
+      animation: fadeUp 0.5s ease both;
+    }
+    .result-hero {
+      background: linear-gradient(135deg, #77B0AF, #5E9897);
+      border-radius: 24px 24px 0 0;
+      padding: 40px 36px 32px;
+      text-align: center;
+      color: #fff;
+    }
+    .result-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 99px;
+      padding: 6px 18px;
+      margin-bottom: 20px;
+      letter-spacing: 0.06em;
+    }
+    .result-hero h2 {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+    .result-hero p {
+      font-size: 14px;
+      opacity: 0.9;
+      line-height: 1.7;
+    }
+    .result-body {
+      background: #fff;
+      border-radius: 0 0 24px 24px;
+      padding: 36px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    }
+
+    .result-name-tag {
+      font-size: 15px;
+      color: var(--teal);
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .includes-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #9AA5B4;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+    .includes-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+    .include-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #F9F6EE;
+      border-radius: 12px;
+      padding: 12px 16px;
+    }
+    .include-item span:first-child { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .include-item div { font-size: 13px; font-weight: 500; color: #3D4A58; line-height: 1.5; }
+    .include-item strong { color: var(--text); }
+
+    .price-box {
+      background: linear-gradient(135deg, #FFF8F0, #FFF3E0);
+      border: 2px solid #F4A020;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .price-from { font-size: 13px; color: #9AA5B4; text-decoration: line-through; }
+    .price-main { font-size: 42px; font-weight: 800; color: #E07B00; line-height: 1.1; }
+    .price-main span { font-size: 20px; font-weight: 600; }
+    .price-sub { font-size: 12px; color: #9AA5B4; margin-top: 4px; }
+    .price-tag {
+      display: inline-block;
+      background: #E07B00;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 99px;
+      padding: 4px 14px;
+      margin-top: 8px;
+    }
+
+    .btn-cta {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--salmon), var(--salmon-dark));
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 6px 24px rgba(192,57,43,0.35);
+      text-align: center;
+    }
+    .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(192,57,43,0.42); }
+    .btn-cta-sub { text-align: center; font-size: 11px; color: #9AA5B4; margin-top: 12px; }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 520px) {
+      .card { padding: 28px 20px; margin: 16px 12px 8px; }
+      .card h2 { font-size: 18px; }
+      .result-hero { padding: 30px 20px 24px; }
+      .result-hero h2 { font-size: 20px; }
+      .result-body { padding: 24px 20px; }
+      .price-main { font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-name">Júlia Cherem · Academy</div>
+  <div class="top-bar-sub">Curso Fatias de Bolo</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-header">
+    <span class="progress-label" id="progressLabel">Pergunta 1 de 5</span>
+    <span class="progress-pct" id="progressPct">20%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
+</div>
+
+<!-- Q1 -->
+<div class="card" id="q1">
+  <div class="step-tag">Passo 1 de 5</div>
+  <h2>Com qual situação você mais se identifica hoje?</h2>
+  <p class="hint">Escolha a opção que melhor descreve você agora</p>
+  <div class="options">
+    <div class="option" onclick="select(this,'q1')">
+      <span class="opt-icon">🌱</span>
+      <span class="opt-text">Quero começar a vender, mas não sei por onde começar</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q1')">
+      <span class="opt-icon">📈</span>
+      <span class="opt-text">Já vendo algo, mas quero aumentar meu faturamento</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q1')">
+      <span class="opt-icon">❤️</span>
+      <span class="opt-text">Faço por hobbie e quero transformar em renda de verdade</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q1')">
+      <span class="opt-icon">💼</span>
+      <span class="opt-text">Quero uma renda extra sem depender de emprego fixo</span>
+      <span class="opt-check"></span>
+    </div>
+  </div>
+  <button class="btn-next" id="btn1" disabled onclick="goNext('q1','q2',2,40)">Próxima pergunta →</button>
+</div>
+
+<!-- Q2 -->
+<div class="card hidden" id="q2">
+  <div class="step-tag">Passo 2 de 5</div>
+  <h2>Qual é o seu maior obstáculo hoje?</h2>
+  <p class="hint">Seja honesta — isso vai nos ajudar a personalizar seu resultado</p>
+  <div class="options">
+    <div class="option" onclick="select(this,'q2')">
+      <span class="opt-icon">🍰</span>
+      <span class="opt-text">Não sei quais receitas vendem de verdade</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q2')">
+      <span class="opt-icon">💰</span>
+      <span class="opt-text">Não sei precificar nem divulgar meus produtos</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q2')">
+      <span class="opt-icon">😰</span>
+      <span class="opt-text">Tenho medo de investir e não ter clientes</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q2')">
+      <span class="opt-icon">⏰</span>
+      <span class="opt-text">Falta de tempo para estudar e colocar em prática</span>
+      <span class="opt-check"></span>
+    </div>
+  </div>
+  <button class="btn-next" id="btn2" disabled onclick="goNext('q2','q3',3,60)">Próxima pergunta →</button>
+</div>
+
+<!-- Q3 -->
+<div class="card hidden" id="q3">
+  <div class="step-tag">Passo 3 de 5</div>
+  <h2>Você já tentou aprender confeitaria antes?</h2>
+  <p class="hint">Não tem resposta certa ou errada aqui</p>
+  <div class="options">
+    <div class="option" onclick="select(this,'q3')">
+      <span class="opt-icon">🔰</span>
+      <span class="opt-text">Nunca tentei, seria meu primeiro contato</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q3')">
+      <span class="opt-icon">📺</span>
+      <span class="opt-text">Aprendi um pouco pelo YouTube e redes sociais</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q3')">
+      <span class="opt-icon">📚</span>
+      <span class="opt-text">Fiz algum curso mas não coloquei em prática</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q3')">
+      <span class="opt-icon">🎂</span>
+      <span class="opt-text">Já faço bolos, mas quero me profissionalizar</span>
+      <span class="opt-check"></span>
+    </div>
+  </div>
+  <button class="btn-next" id="btn3" disabled onclick="goNext('q3','q4',4,80)">Próxima pergunta →</button>
+</div>
+
+<!-- Q4 -->
+<div class="card hidden" id="q4">
+  <div class="step-tag">Passo 4 de 5</div>
+  <h2>Quanto tempo você tem disponível por semana para aprender e praticar?</h2>
+  <p class="hint">Seja realista com sua rotina atual</p>
+  <div class="options">
+    <div class="option" onclick="select(this,'q4')">
+      <span class="opt-icon">⚡</span>
+      <span class="opt-text">Menos de 2 horas — minha rotina é corrida</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q4')">
+      <span class="opt-icon">🕐</span>
+      <span class="opt-text">De 2 a 5 horas por semana</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q4')">
+      <span class="opt-icon">🕓</span>
+      <span class="opt-text">De 5 a 10 horas por semana</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q4')">
+      <span class="opt-icon">🚀</span>
+      <span class="opt-text">Tenho bastante tempo, quero me dedicar de verdade</span>
+      <span class="opt-check"></span>
+    </div>
+  </div>
+  <button class="btn-next" id="btn4" disabled onclick="goNext('q4','q5',5,100)">Próxima pergunta →</button>
+</div>
+
+<!-- Q5 -->
+<div class="card hidden" id="q5">
+  <div class="step-tag">Passo 5 de 5</div>
+  <h2>Qual meta financeira você quer alcançar nos próximos 60 dias?</h2>
+  <p class="hint">Seja ambiciosa — você está mais perto do que imagina</p>
+  <div class="options">
+    <div class="option" onclick="select(this,'q5')">
+      <span class="opt-icon">🎯</span>
+      <span class="opt-text">Fazer minha primeira venda e ganhar confiança</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q5')">
+      <span class="opt-icon">💵</span>
+      <span class="opt-text">Faturar R$500 a R$1.000 extra por mês</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q5')">
+      <span class="opt-icon">💰</span>
+      <span class="opt-text">Faturar mais de R$2.000 por mês com doces</span>
+      <span class="opt-check"></span>
+    </div>
+    <div class="option" onclick="select(this,'q5')">
+      <span class="opt-icon">🏆</span>
+      <span class="opt-text">Ter minha própria confeitaria ou negócio fixo</span>
+      <span class="opt-check"></span>
+    </div>
+  </div>
+  <button class="btn-next" id="btn5" disabled onclick="goToEmail()">Ver meu resultado personalizado →</button>
+</div>
+
+<!-- EMAIL CAPTURE -->
+<div class="card hidden" id="screen-email">
+  <div class="step-tag">Quase lá! 🎉</div>
+  <h2>Encontramos o resultado perfeito para você!</h2>
+  <div class="email-highlight">
+    <span>⚠️</span> Preencha abaixo para desbloquear sua análise completa
+  </div>
+  <div class="form-group">
+    <div class="form-field">
+      <label for="inputName">Como você se chama?</label>
+      <input type="text" id="inputName" placeholder="Seu primeiro nome" autocomplete="given-name">
+    </div>
+    <div class="form-field">
+      <label for="inputEmail">Qual é o seu melhor e-mail?</label>
+      <input type="email" id="inputEmail" placeholder="seuemail@exemplo.com" autocomplete="email">
+    </div>
+    <div class="form-field">
+      <label for="inputWhatsapp">WhatsApp (opcional — para ofertas exclusivas)</label>
+      <input type="tel" id="inputWhatsapp" placeholder="(11) 99999-9999" autocomplete="tel">
+    </div>
+  </div>
+  <button class="btn-next" id="btnEmail" onclick="goToResult()" style="margin-top:20px">
+    🔓 VER MEU RESULTADO AGORA
+  </button>
+  <p class="privacy-note">🔒 Seus dados estão seguros. Não enviamos spam.</p>
+</div>
+
+<!-- LOADING -->
+<div id="screen-loading">
+  <div class="loading-emoji">🔍</div>
+  <div class="loading-text">Analisando seu perfil...</div>
+  <div class="loading-sub">Personalizando seu resultado com base nas suas respostas</div>
+  <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result">
+  <div class="result-hero">
+    <div class="result-badge">✅ Análise completa</div>
+    <h2 id="resultTitle">Você tem exatamente o perfil de quem transforma fatias em lucro real!</h2>
+    <p id="resultDesc">Com base nas suas respostas, identificamos que você está no momento certo para dar esse passo. O Curso Fatias foi criado exatamente para pessoas como você.</p>
+  </div>
+  <div class="result-body">
+    <div class="result-name-tag" id="resultName">Olá! Aqui está o que o curso vai fazer por você:</div>
+
+    <div class="includes-title">O que você vai receber</div>
+    <div class="includes-list">
+      <div class="include-item"><span>🍰</span><div><strong>Receitas base campeãs de venda</strong> — as mesmas que Júlia usa na confeitaria dela há 11 anos</div></div>
+      <div class="include-item"><span>💰</span><div><strong>Precificação estratégica</strong> — planilha completa para você nunca mais vender no prejuízo</div></div>
+      <div class="include-item"><span>📱</span><div><strong>Como vender pelo WhatsApp, iFood e Instagram</strong> — mesmo começando do zero</div></div>
+      <div class="include-item"><span>📦</span><div><strong>Embalagem, transporte e conservação</strong> — para impressionar cada cliente</div></div>
+      <div class="include-item"><span>⚡</span><div><strong>Acesso imediato e vitalício</strong> — assista quando e onde quiser</div></div>
+    </div>
+
+    <div class="price-box">
+      <div class="price-from">De R$97,00</div>
+      <div class="price-main"><span>R$</span>29,90</div>
+      <div class="price-sub">pagamento único · acesso imediato</div>
+      <span class="price-tag">🔥 Oferta por tempo limitado</span>
+    </div>
+
+    <a href="index.html" class="btn-cta">QUERO GARANTIR MINHA VAGA AGORA →</a>
+    <p class="btn-cta-sub">🔒 7 dias de garantia · Pagamento 100% seguro</p>
+  </div>
+</div>
+
+<script>
+  const answers = {};
+
+  function select(el, qId) {
+    document.querySelectorAll('#' + qId + ' .option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    answers[qId] = el.querySelector('.opt-text').textContent.trim();
+    const btns = { q1:'btn1', q2:'btn2', q3:'btn3', q4:'btn4', q5:'btn5' };
+    document.getElementById(btns[qId]).disabled = false;
+  }
+
+  function goNext(fromId, toId, stepNum, pct) {
+    document.getElementById(fromId).classList.add('hidden');
+    document.getElementById(toId).classList.remove('hidden');
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = 'Pergunta ' + stepNum + ' de 5';
+    document.getElementById('progressPct').textContent = pct + '%';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goToEmail() {
+    document.getElementById('q5').classList.add('hidden');
+    document.getElementById('progressWrap').classList.add('hidden');
+    document.getElementById('screen-email').classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goToResult() {
+    const name  = document.getElementById('inputName').value.trim();
+    const email = document.getElementById('inputEmail').value.trim();
+
+    if (!name) { document.getElementById('inputName').focus(); return; }
+    if (!email || !email.includes('@')) { document.getElementById('inputEmail').focus(); return; }
+
+    // Salva lead localmente
+    const lead = {
+      name, email,
+      whatsapp: document.getElementById('inputWhatsapp').value.trim(),
+      answers,
+      date: new Date().toISOString()
+    };
+    const leads = JSON.parse(localStorage.getItem('jc_leads') || '[]');
+    leads.push(lead);
+    localStorage.setItem('jc_leads', JSON.stringify(leads));
+
+    // Envia para Formspree (substitua YOUR_FORM_ID pelo ID do seu formulário em formspree.io)
+    const FORMSPREE_ID = 'YOUR_FORM_ID';
+    if (FORMSPREE_ID !== 'YOUR_FORM_ID') {
+      fetch('https://formspree.io/f/' + FORMSPREE_ID, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, whatsapp: lead.whatsapp, ...answers })
+      }).catch(() => {});
+    }
+
+    document.getElementById('screen-email').classList.add('hidden');
+    document.getElementById('screen-loading').style.display = 'flex';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    setTimeout(() => {
+      document.getElementById('screen-loading').style.display = 'none';
+      showResult(name);
+    }, 2400);
+  }
+
+  function showResult(name) {
+    const resultEl = document.getElementById('screen-result');
+    resultEl.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (name) {
+      document.getElementById('resultName').textContent = name + ', aqui está o que o curso vai fazer por você:';
+    }
+
+    const profileMap = {
+      'Quero começar a vender': 'Você tem o perfil perfeito de quem está pronta para dar o primeiro passo e começar a faturar!',
+      'Já vendo algo':          'Você já tem o espírito empreendedor — agora é hora de escalar com as estratégias certas!',
+      'Faço por hobbie':        'Quem faz com amor vende com facilidade. Você está a um passo de transformar sua paixão em renda real!',
+      'Quero uma renda extra':  'Independência financeira começa com uma decisão. Você chegou no lugar certo!'
+    };
+
+    const ans1 = answers['q1'] || '';
+    for (const [key, title] of Object.entries(profileMap)) {
+      if (ans1.includes(key)) {
+        document.getElementById('resultTitle').textContent = title;
+        break;
+      }
+    }
+  }
+</script>
+</body>
+</html>
